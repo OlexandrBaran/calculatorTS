@@ -1,0 +1,47 @@
+body{
+    background-image: url('https://wallpaperaccess.com/full/1686771.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    position: relative;
+}
+
+h1{
+    text-align: center;
+}
+.calculator-container{
+    position: absolute;
+    width:50%;
+    border: none;
+    width: 180px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 50%;
+    transform: translate(0, 50%);
+  
+    
+}
+
+.btn{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    
+}
+
+.numeric{
+    background-color: white;
+    color: black;
+}
+
+.special-btn{
+    background-color: red;
+    color: white; 
+}
+
+#monitor {
+    margin: 10px 0;
+    height: 30px;
+    border: none;
+}
