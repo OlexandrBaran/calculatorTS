@@ -1,3 +1,6 @@
-function sayHello () : void {
-    alert("hello calc")
-}
+
+function blab(): void {
+    alert("hello calc");
+};
+
+blab();
