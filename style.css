@@ -1,57 +1,67 @@
-body{
-    background-image: url('https://wallpaperaccess.com/full/1686771.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-    position: relative;
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #ecf0f3;
+    font-family: sans-serif;
+    outline: none;
 }
 
-h1{
-    text-align: center;
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-#calculator-container{
-    position: absolute;
-    width:50%;
+
+.calculator-container {
+    background-color: #ecf0f3;
+    padding: 15px;
+    border-radius: 30px;
+    box-shadow: inset 5px 5px 12px white,
+                      5px 5px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+#display {
+    height: 70px;
+    width: 250px;
+    margin: 40px auto 30px auto;
+    padding: 20px;
+    color: rgb(70, 70, 70);
     border: none;
-    width: 180px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    top: 50%;
-    transform: translate(0, 50%);
-  
-    
+    background-color: #ecf0f3;
+    box-shadow: inset -5px -5px 12px white,
+                inset  5px  5px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    font-size: 40px;
+    text-align: end;
+   
 }
 
 .btn{
+    height: 48px;
+    width: 48px;
+    background-color: #ecf0f3;
+    border: none;
+    box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.3);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    font: 1em sans-serif;
+}
+
+.button-section {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px auto;
     
 }
 
-.btn-number{
-    background-color: white;
-    color: black;
-}
-
 .special-btn{
-    background-color: red;
+    background-color: rgb(70, 70, 70);
     color: white; 
-}
-
-#display {
-    margin: 10px 0;
-    height: 30px;
-    border: none;
-   
-}
-
-#display:focus {
-    outline: none;
-   
 }
 
 .specialBtn-section {
     display: none;
+    
 }

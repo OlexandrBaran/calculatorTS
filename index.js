@@ -183,10 +183,10 @@ const operatorPressed = (btnValue) => {
 const specialPanelAction = () => {
     let specialBtnSections = document.querySelectorAll('.specialBtn-section');
     specialBtnSections.forEach( section => {
-        if(section.getAttribute('style') === 'display: block')
+        if(section.getAttribute('style') === 'display: flex')
             section.setAttribute('style', 'display: none');
         else
-            section.setAttribute('style', 'display: block');
+            section.setAttribute('style', 'display: flex');
     })
 }
 
