@@ -70,6 +70,8 @@ const numberPressed = (btnValue) => {
         currentOperator = null;
     }
 
+    
+
             // We handle null/-0 the same, replace them with the number pressed
     if (display.value === '' || isNegativeZero) {
         display.value = isNegativeZero ? '-' + btnValue : btnValue;
