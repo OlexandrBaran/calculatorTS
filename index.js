@@ -1,4 +1,5 @@
 
+
 //-------------------------------------------------------------
 // Math operations
 var add = function (a, b) { return a + b; };
@@ -70,7 +71,7 @@ const numberPressed = (btnValue) => {
         currentOperator = null;
     }
 
-    
+
 
             // We handle null/-0 the same, replace them with the number pressed
     if (display.value === '' || isNegativeZero) {
@@ -111,7 +112,7 @@ const evaluate = () => {
             rightNum = parseFloat(display.value);
            operation = operations[currentOperator || lastOperator];
      
-    let result = operation(leftNum, rightNum);
+    let result = parseFloat(operation( leftNum, rightNum).toFixed(3));
         currentTotal = null;
         display.value = result.toString();
         displayShouldClear = true;
