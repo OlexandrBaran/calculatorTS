@@ -1,16 +1,14 @@
-
-
-//-------------------------------------------------------------
 // Math operations
-var add = function (a, b) { return a + b; };
-var subtract = function (a, b) { return a - b; };
-var divide = function (a, b) { return a / b; };
-var multiply = function (a, b) { return a * b; };
-var numberPower2 = function (a) { return Math.pow(a, 2); };
-var numberPower3 = function (a, b) { return a * b; };
-var numberPowerNumber = function (a, b) { return a * b; };
-var sqrtNumber = function (a, b) { return a * b; };
-var oneDivideNumber =  function (a, b) { return a * b; };
+var add = (a, b) => a + b;
+var subtract = (a, b) => a - b;
+var divide = (a, b) =>  a / b; 
+var multiply = (a, b) =>  a * b;
+var numberPower2 = a =>  Math.pow(a, 2); 
+var numberPower3 = a =>  Math.pow(a, 3);
+var numberPowerNumber = (a, b) => Math.pow(a, b); 
+var sqrtNumber = a => Math.sqrt(a);
+var oneDivideNumber = a => 1/a;
+
 // map symbols to math operations
 var operations = {
     '+': add,
@@ -46,8 +44,7 @@ const buttonPressed = ({btnValue, btnType}) => {
     return;
 }
 
-const numberPressed = (btnValue) => {
-            
+const numberPressed = (btnValue) => {       
    var isNegativeZero = display.value === '-0';
 
    if (displayShouldClear) {
@@ -70,20 +67,18 @@ const numberPressed = (btnValue) => {
         lastOperator = currentOperator;
         currentOperator = null;
     }
-
-
-
-            // We handle null/-0 the same, replace them with the number pressed
-    if (display.value === '' || isNegativeZero) {
-        display.value = isNegativeZero ? '-' + btnValue : btnValue;
-              
-                return;
-    }
-            
-            display.value += btnValue
-            
-            return;
     
+    if (display.value === '' || isNegativeZero) {
+        display.value = isNegativeZero ? '-' + btnValue : btnValue;              
+        return;
+    }    
+
+    if (display.value === '0' && btnValue === '0') {
+        return;
+      }
+    
+    display.value += btnValue;      
+    return;
 }
 
 const removeHangingDecimal = () => {
@@ -94,25 +89,28 @@ const removeHangingDecimal = () => {
 
 const clear = () => {
     display.value = '';
+    currentTotal = null;
+    currentOperator = null;
+    lastOperator = null;
+    displayShouldClear = true;
+}
 
+const clearOne = () => {
+    display.value = display.value.slice(0, display.value.length - 1);
 }
 
 const evaluate = () => {
-    
     // No operator? Can't evaluate
     if (currentOperator && lastOperator)
             return;
 
     removeHangingDecimal();
     let leftNum, rightNum, operation;
-
-        
-   
-            leftNum = currentTotal;
-            rightNum = parseFloat(display.value);
-           operation = operations[currentOperator || lastOperator];
+        leftNum = currentTotal;
+        rightNum = parseFloat(display.value);
+        operation = operations[currentOperator || lastOperator];
      
-    let result = parseFloat(operation( leftNum, rightNum).toFixed(3));
+    let result = parseFloat(operation( leftNum, rightNum).toFixed(6));
         currentTotal = null;
         display.value = result.toString();
         displayShouldClear = true;
@@ -124,11 +122,9 @@ const evaluate = () => {
 const dotPressed = () => {
     if (typeof display.value === 'string' && !display.value.includes('.') && display.value.length > 0 && !displayShouldClear) {
         display.value += '.';
-        //solve 0.1 + 0.2 = 0.30000000000004 problem
     }
     else if (displayShouldClear || display.value === '') {
         display.value += '0.'
-        
         displayShouldClear = false;
     }
 }
@@ -137,9 +133,7 @@ const switchPolarity = () => {
     if (currentOperator && display.value) {
         currentTotal = parseFloat(display.value);
     }
-    if (display.value || (display.value && currentOperator)) {
-        display.value = "0";
-    }
+
     if (display.value.substr(0, 1) === '-') {
         display.value = display.value.substr(1, display.value.length);
     }
@@ -147,7 +141,18 @@ const switchPolarity = () => {
         display.value = '-' + display.value;
     }
     displayShouldClear = false;
-   
+}
+
+const specialBtnMathOperation = () => {
+    let parsedNum = parseFloat(display.value);
+    let operation = operations[currentOperator];
+     
+    let result = parseFloat(operation(parsedNum).toFixed(6));
+        currentTotal = null;
+        display.value = result.toString();
+        displayShouldClear = true;
+
+    return result;
 }
 
 
@@ -160,17 +165,23 @@ const operatorPressed = (btnValue) => {
         case '-':
         case '*':
         case '/':
+        case 'xY':
+            currentOperator = btnValue;
+            displayShouldClear = false;
+            break;
         case 'x2':
         case 'x3':
-        case 'xY':
         case 'sqrtX':
         case '1/x':
             currentOperator = btnValue;
-            displayShouldClear = false;
+            specialBtnMathOperation()
             break;
         case 'clearAll':
             clear();
             break;
+        case 'clearOne':
+                clearOne();
+                break;
         case '.':
             dotPressed();
             break;
@@ -193,26 +204,15 @@ const specialPanelAction = () => {
     })
 }
 
-
-
 //init function launched when app started
 function init() {
 
     var display = document.getElementById('display');
-   
     let calcBtns = document.querySelectorAll('.btn');
 
-    const displayUpdate = (btnValue) => {
-        if (btnValue !== 'showPanel'){}
-;
-        
-    }
-
-    
     calcBtns.forEach( btn => btn.addEventListener('click', (e) => {
         let btnValue = e.target.getAttribute("data-value");
         let btnType = e.target.getAttribute("data-type");
-        displayUpdate(btnValue)
         buttonPressed({ btnValue, btnType})
     }) )
 }
