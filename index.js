@@ -214,7 +214,49 @@ function init() {
         let btnValue = e.target.getAttribute("data-value");
         let btnType = e.target.getAttribute("data-type");
         buttonPressed({ btnValue, btnType})
-    }) )
+    }) );
+
+    document.addEventListener('keypress', (event) => {
+        let btnValue, btnType;
+        btnValue = event.key;
+
+        console.log(event)
+        switch (btnValue) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                btnType = 'number';
+                buttonPressed({ btnValue, btnType});
+                break;
+            case '.':
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '=':
+                btnType = 'operator';
+                buttonPressed({ btnValue, btnType});
+                break;
+            case 'Enter':
+                btnType = 'operator';
+                btnValue = '='
+                buttonPressed({ btnValue, btnType});
+                break;
+            case 'Backspace':
+                clearOne();
+                break;
+            default:
+                break;
+        }
+    });
+
 }
 //EventListener launch when app is started(DOM loaded)
 document.addEventListener('DOMContentLoaded', init);
