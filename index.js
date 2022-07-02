@@ -26,6 +26,8 @@ var displayShouldClear; //boolean chi maye zmin ekran
 var currentOperator; //String potochniy operator
 var currentTotal;//potpschniy resultat
 var lastOperator;
+var historyArr = [];
+var historyClc = 0;
 
 const buttonPressed = ({btnValue, btnType}) => {
     switch (btnType) {
@@ -106,17 +108,33 @@ const evaluate = () => {
 
     removeHangingDecimal();
     let leftNum, rightNum, operation;
+
+    if (this.displayShouldClear) { // Hitting evaluate again just after an evaluation, repeat op
+        //const latestOperation = this.history[this.history.length - 1];
+        //leftNum =  parseFloat(this.onDisplay);
+        //rightNum = latestOperation.rightNum;
+        //operation = latestOperation.operation;
+      }
+      else{
         leftNum = currentTotal;
         rightNum = parseFloat(display.value);
         operation = operations[currentOperator || lastOperator];
-     
+      }
+
     let result = parseFloat(operation( leftNum, rightNum).toFixed(6));
         currentTotal = null;
         display.value = result.toString();
         displayShouldClear = true;
-
+    historyArr.unshift(result);
     return result;
        
+}
+
+const showHistory = (historyClics) => {
+    if(historyClc < historyArr.length + 1)
+        display.value = historyArr[historyClics-1];
+    else
+        display.value = '';
 }
 
 const dotPressed = () => {
@@ -156,7 +174,7 @@ const specialBtnMathOperation = () => {
 }
 
 
-const operatorPressed = (btnValue) => {
+const operatorPressed = (btnValue) => {   
     switch (btnValue) {
         case '=':
            evaluate();
@@ -187,6 +205,10 @@ const operatorPressed = (btnValue) => {
             break;
         case 'switchPolarity':
             switchPolarity();
+            break;
+        case 'history':
+            
+            showHistory(++historyClc);
             break;
         default:
             throw new Error('clicked wrong operator');
@@ -219,8 +241,6 @@ function init() {
     document.addEventListener('keypress', (event) => {
         let btnValue, btnType;
         btnValue = event.key;
-
-        console.log(event)
         switch (btnValue) {
             case '0':
             case '1':
