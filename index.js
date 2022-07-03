@@ -1,3 +1,11 @@
+// basic variables
+var displayShouldClear; 
+var currentOperator; 
+var currentTotal;
+var lastOperator;
+var historyArr = [];
+var historyClc = 0;
+
 // Math operations
 var add = (a, b) => a + b;
 var subtract = (a, b) => a - b;
@@ -26,13 +34,8 @@ var operations = {
     '1/x': oneDivideNumber
 };
 
-var displayShouldClear; //boolean chi maye zmin ekran
-var currentOperator; //String potochniy operator
-var currentTotal;//potpschniy resultat
-var lastOperator;
-var historyArr = [];
-var historyClc = 0;
 
+//handle event when btn pressed
 const buttonPressed = ({btnValue, btnType}) => {
     switch (btnType) {
         case 'number':
@@ -50,6 +53,7 @@ const buttonPressed = ({btnValue, btnType}) => {
     return;
 }
 
+//number pressed functions
 const numberPressed = (btnValue) => {       
    var isNegativeZero = display.value === '-0';
 
@@ -87,12 +91,14 @@ const numberPressed = (btnValue) => {
     return;
 }
 
+//remove last dot
 const removeHangingDecimal = () => {
     if (display.value.indexOf('.') === display.value.length) {
         display.value = display.value.slice(0, display.value.length - 1);
     }
 };
 
+//clear display fucktion
 const clear = () => {
     display.value = '';
     currentTotal = null;
@@ -101,30 +107,33 @@ const clear = () => {
     displayShouldClear = true;
 }
 
+//backspase function (clear one element from display)
 const clearOne = () => {
     display.value = display.value.slice(0, display.value.length - 1);
 }
 
+// = 
 const evaluate = () => {
-    // No operator? Can't evaluate
+    // No operator
     if (currentOperator && lastOperator)
             return;
 
     removeHangingDecimal();
     let leftNum, rightNum, operation;
-
-    if (displayShouldClear) { // Hitting evaluate again just after an evaluation
+    
+    if (displayShouldClear) { 
         const latestOperation = historyArr[0];
         leftNum =  parseFloat(display.value);
         rightNum = latestOperation.rightNum;
-        operation = latestOperation.operation;
+        operation = lastOperator;
+        return;
       } else {
         leftNum = currentTotal;
         rightNum = parseFloat(display.value);
         operation = operations[currentOperator || lastOperator];
       }
 
-    let result = parseFloat(operation( leftNum, rightNum).toFixed(6));
+    let result = parseFloat(operation(leftNum, rightNum).toFixed(6));
         currentTotal = null;
         display.value = result.toString();
         displayShouldClear = true;
@@ -133,6 +142,7 @@ const evaluate = () => {
        
 }
 
+//show history by clicking btn H
 const showHistory = (historyClics) => {
     if(historyClc < historyArr.length + 1)
         display.value = historyArr[historyClics-1];
@@ -140,6 +150,7 @@ const showHistory = (historyClics) => {
         display.value = '';
 }
 
+// funk when dot pressed
 const dotPressed = () => {
     if (typeof display.value === 'string' && !display.value.includes('.') && display.value.length > 0 && !displayShouldClear) {
         display.value += '.';
@@ -150,6 +161,7 @@ const dotPressed = () => {
     }
 }
 
+//switch + -
 const switchPolarity = () => {
     if (currentOperator && display.value) {
         currentTotal = parseFloat(display.value);
@@ -164,6 +176,7 @@ const switchPolarity = () => {
     displayShouldClear = false;
 }
 
+//func for operations that have work with one value
 const specialBtnMathOperation = () => {
     let parsedNum = parseFloat(display.value);
     let operation = operations[currentOperator];
@@ -176,24 +189,7 @@ const specialBtnMathOperation = () => {
     return result;
 }
 
-const bracketsPressed = (btnValue) => {
-    let numberArray = [];
-    let operationsArray = [];
-    const operationsPriority = {
-        '+':1,
-        '-':1,
-        '*':2,
-        '/':2,
-        'pow':3,
-    }
-    if(btnValue === '(' && !display.value.includes(')') && !display.value.includes('(')){
-        display.value += '(';
-    }
-    else if(display.value.includes('(') && !display.value.includes(')')){
-        display.value += ')';
-    }
-}
-
+//operators press function
 const operatorPressed = (btnValue) => {   
     switch (btnValue) {
         case '=':
@@ -220,8 +216,8 @@ const operatorPressed = (btnValue) => {
             clear();
             break;
         case 'clearOne':
-                clearOne();
-                break;
+            clearOne();
+            break;
         case '.':
             dotPressed();
             break;
@@ -231,15 +227,12 @@ const operatorPressed = (btnValue) => {
         case 'history':
             showHistory(++historyClc);
             break;
-        case'(':
-        case')':
-            bracketsPressed(btnValue);
         default:
             throw new Error('clicked wrong operator');
     }
 }
 
-
+//func for showing and hide special btns
 const specialPanelAction = () => {
     let specialBtnSections = document.querySelectorAll('.specialBtn-section');
     specialBtnSections.forEach( section => {
@@ -248,6 +241,46 @@ const specialPanelAction = () => {
         else
             section.setAttribute('style', 'display: flex');
     })
+}
+
+const onKeyPress = (event) => {
+    let btnValue, btnType;
+    btnValue = event.key;
+    switch (btnValue) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            btnType = 'number';
+            buttonPressed({ btnValue, btnType});
+            break;
+        case '.':
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '=':
+            btnType = 'operator';
+            buttonPressed({ btnValue, btnType});
+            break;
+        case 'Enter':alert(event.key);
+            btnType = 'operator';
+            btnValue = '=';
+            buttonPressed({ btnValue, btnType});
+            
+            break;
+        case 'Backspace':
+            clearOne();
+            break;
+        default:
+            break;
+    }
 }
 
 //init function launched when app started
@@ -263,42 +296,7 @@ function init() {
     }) );
 
     document.addEventListener('keypress', (event) => {
-        let btnValue, btnType;
-        btnValue = event.key;
-        switch (btnValue) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                btnType = 'number';
-                buttonPressed({ btnValue, btnType});
-                break;
-            case '.':
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case '=':
-                btnType = 'operator';
-                buttonPressed({ btnValue, btnType});
-                break;
-            case 'Enter':
-                btnType = 'operator';
-                btnValue = '='
-                buttonPressed({ btnValue, btnType});
-                break;
-            case 'Backspace':
-                clearOne();
-                break;
-            default:
-                break;
-        }
+        onKeyPress(event);
     });
 
 }
