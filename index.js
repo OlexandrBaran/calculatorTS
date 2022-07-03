@@ -269,11 +269,10 @@ const onKeyPress = (event) => {
             btnType = 'operator';
             buttonPressed({ btnValue, btnType});
             break;
-        case 'Enter':alert(event.key);
+        case 'Enter':
             btnType = 'operator';
             btnValue = '=';
             buttonPressed({ btnValue, btnType});
-            
             break;
         case 'Backspace':
             clearOne();
