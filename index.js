@@ -125,7 +125,7 @@ const evaluate = () => {
         const latestOperation = historyArr[0];
         leftNum =  parseFloat(display.value);
         rightNum = latestOperation.rightNum;
-        operation = lastOperator;
+        operation = latestOperation.operation;
         return;
       } else {
         leftNum = currentTotal;
@@ -137,7 +137,12 @@ const evaluate = () => {
         currentTotal = null;
         display.value = result.toString();
         displayShouldClear = true;
-    historyArr.unshift(result);
+    historyArr.unshift({
+        operation:operation,
+        rightNum: rightNum,
+        leftNum: leftNum,
+        result:result
+    });
     return result;
        
 }
@@ -145,7 +150,7 @@ const evaluate = () => {
 //show history by clicking btn H
 const showHistory = (historyClics) => {
     if(historyClc < historyArr.length + 1)
-        display.value = historyArr[historyClics-1];
+        display.value = historyArr[historyClics-1].result;
     else
         display.value = '';
 }
@@ -244,6 +249,7 @@ const specialPanelAction = () => {
 }
 
 const onKeyPress = (event) => {
+    console.log(event)
     let btnValue, btnType;
     btnValue = event.key;
     switch (btnValue) {
