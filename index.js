@@ -7,6 +7,8 @@ var numberPower2 = a =>  Math.pow(a, 2);
 var numberPower3 = a =>  Math.pow(a, 3);
 var numberPowerNumber = (a, b) => Math.pow(a, b); 
 var sqrtNumber = a => Math.sqrt(a);
+var root3 = a => Math.cbrt(a);
+var rootNumber = (a, b) => Math.pow(a, 1/b);
 var oneDivideNumber = a => 1/a;
 
 // map symbols to math operations
@@ -19,6 +21,8 @@ var operations = {
     'x3': numberPower3,
     'xY': numberPowerNumber,
     'sqrtX': sqrtNumber,
+    'root3': root3,
+    'rootY':rootNumber,
     '1/x': oneDivideNumber
 };
 
@@ -109,13 +113,12 @@ const evaluate = () => {
     removeHangingDecimal();
     let leftNum, rightNum, operation;
 
-    if (this.displayShouldClear) { // Hitting evaluate again just after an evaluation, repeat op
-        //const latestOperation = this.history[this.history.length - 1];
-        //leftNum =  parseFloat(this.onDisplay);
-        //rightNum = latestOperation.rightNum;
-        //operation = latestOperation.operation;
-      }
-      else{
+    if (displayShouldClear) { // Hitting evaluate again just after an evaluation
+        const latestOperation = historyArr[0];
+        leftNum =  parseFloat(display.value);
+        rightNum = latestOperation.rightNum;
+        operation = latestOperation.operation;
+      } else {
         leftNum = currentTotal;
         rightNum = parseFloat(display.value);
         operation = operations[currentOperator || lastOperator];
@@ -173,6 +176,23 @@ const specialBtnMathOperation = () => {
     return result;
 }
 
+const bracketsPressed = (btnValue) => {
+    let numberArray = [];
+    let operationsArray = [];
+    const operationsPriority = {
+        '+':1,
+        '-':1,
+        '*':2,
+        '/':2,
+        'pow':3,
+    }
+    if(btnValue === '(' && !display.value.includes(')') && !display.value.includes('(')){
+        display.value += '(';
+    }
+    else if(display.value.includes('(') && !display.value.includes(')')){
+        display.value += ')';
+    }
+}
 
 const operatorPressed = (btnValue) => {   
     switch (btnValue) {
@@ -184,15 +204,17 @@ const operatorPressed = (btnValue) => {
         case '*':
         case '/':
         case 'xY':
+        case 'rootY':
             currentOperator = btnValue;
             displayShouldClear = false;
             break;
         case 'x2':
         case 'x3':
         case 'sqrtX':
+        case 'root3':
         case '1/x':
             currentOperator = btnValue;
-            specialBtnMathOperation()
+            specialBtnMathOperation();
             break;
         case 'clearAll':
             clear();
@@ -207,9 +229,11 @@ const operatorPressed = (btnValue) => {
             switchPolarity();
             break;
         case 'history':
-            
             showHistory(++historyClc);
             break;
+        case'(':
+        case')':
+            bracketsPressed(btnValue);
         default:
             throw new Error('clicked wrong operator');
     }
